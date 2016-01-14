@@ -7,7 +7,10 @@ var pkg = require('./package.json');
 // Node
 var path = require('path'),
     // NPM
-    webpack = require('webpack');
+    webpack = require('webpack'),
+
+    // Webpack plugins
+    HtmlWebpackPlugin  = require('html-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
@@ -29,58 +32,38 @@ module.exports = {
     historyApiFallback: true
   },
 
-  // entry: './bootstrap',
   entry: {
-    'angular2': [
-      // Angular Deps
-      'rxjs',
-      'zone.js',
-      'reflect-metadata',
-      // Combine into one file
-      'angular2/angular2',
-      'angular2/core',
-      'angular2/router',
-      'angular2/http',
-    ],
-    'app': [
-      'babel-polyfill',
-      './app/bootstrap'
-    ]
+    'vendor': './src/vendor',
+    'main': './src/main'
   },
 
   output: {
-    path: root('build'),
+    path: root('dist'),
     filename: '[name].js',
     sourceMapFilename: '[name].js.map',
     chunkFilename: '[id].bundle.js'
   },
 
   resolve: {
-    root: __dirname,
-    extensions: ['', '.js', '.json'],
-    alias: {
-    }
+    extensions: ['','.ts','.js','.json','.css','.html'],
   },
 
   module: {
-    noParse: [],
+    preLoaders: [{ test: /\.ts$/, loader: 'tslint-loader', exclude: [/node_modules/] }],
     loaders: [
       {
-        test: /\.js$/,
-        loader: 'babel',
-        exclude: [
-          path.resolve(__dirname, "node_modules"),
-        ],
-        query: {
-          plugins: ['transform-runtime'],
-          presets: ['es2015', 'stage-0']
-        }
+        test: /\.ts$/,
+        loader: 'ts-loader',
+        exclude: [ /\.(spec|e2e)\.ts$/, /node_modules\/(?!(ng2-.+))/ ]
       },
-      {
-        test: /\.html$/,
-        loader: 'html'
-        // loader: 'ngtemplate?relativeTo=/app/js/!html'
-      },
+
+      { test: /\.html$/,  loader: 'raw-loader' },
+
+      // {
+      //   test: /\.html$/,
+      //   loader: 'html'
+      //   // loader: 'ngtemplate?relativeTo=/app/js/!html'
+      // },
       {
         test: /\.scss$/,
         loader: 'style!css!autoprefixer!sass'
@@ -90,7 +73,11 @@ module.exports = {
         loader: 'style!css'
       }
     ]
-  }
+  },
+
+  plugins: [
+    new HtmlWebpackPlugin({ template: 'src/index.html', inject: false }),
+  ]
 }
 
 function root(args) {

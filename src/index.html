@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Webpack HtmlWebpackPlugin manually inject scripts -->
+    {% for (var chunk in o.htmlWebpackPlugin.files.chunks) { %}
+    <script src="{%= o.htmlWebpackPlugin.files.chunks[chunk].entry %}"></script>
+    {% } %}
+    <meta charset="utf-8">
+    <title>Title!!</title>
+  </head>
+  <body>
+    <h1>Neat!</h1>
+  </body>
+</html>
