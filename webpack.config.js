@@ -51,19 +51,23 @@ module.exports = {
   module: {
     preLoaders: [{ test: /\.ts$/, loader: 'tslint-loader', exclude: [/node_modules/] }],
     loaders: [
+      // Support for .ts files.
       {
         test: /\.ts$/,
         loader: 'ts-loader',
+        query: {
+          'ignoreDiagnostics': [
+            2403, // 2403 -> Subsequent variable declarations
+            2300, // 2300 -> Duplicate identifier
+            2374, // 2374 -> Duplicate number index signature
+            2375  // 2375 -> Duplicate string index signature
+          ]
+        },
         exclude: [ /\.(spec|e2e)\.ts$/, /node_modules\/(?!(ng2-.+))/ ]
       },
 
       { test: /\.html$/,  loader: 'raw-loader' },
 
-      // {
-      //   test: /\.html$/,
-      //   loader: 'html'
-      //   // loader: 'ngtemplate?relativeTo=/app/js/!html'
-      // },
       {
         test: /\.scss$/,
         loader: 'style!css!autoprefixer!sass'
